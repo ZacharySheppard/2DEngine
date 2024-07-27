@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+
+# external files
+extern/
+
+# build and install files
+[Oo]ut/

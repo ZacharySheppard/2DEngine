@@ -1,0 +1,13 @@
+set(LIBRARY_NAME core)
+
+set(TARGET_SOURCES
+    main.cpp
+)
+
+add_executable(${LIBRARY_NAME} ${TARGET_SOURCES})
+set_property(TARGET ${LIBRARY_NAME} PROPERTY CXX_STANDARD 23)
+
+
+install(TARGETS ${LIBRARY_NAME}
+DESTINATION .
+)

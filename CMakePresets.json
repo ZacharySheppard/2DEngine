@@ -1,0 +1,77 @@
+{
+  "version": 2,
+  "configurePresets": [
+    {
+      "name": "x64-windows",
+      "hidden": true,
+      "toolset": "host=x64",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_TOOLCHAIN_FILE": "extern/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static"
+      }
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "debug",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "msvc-2022",
+      "hidden": true,
+      "inherits": [
+        "x64-windows"
+      ],
+      "generator": "Visual Studio 17 2022",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+      }
+    },
+    {
+      "name": "x64-msvc-2022-debug",
+      "inherits": [
+        "msvc-2022",
+        "debug"
+      ],
+      "displayName": "Visual Studio Community 2022 - amd64 - Debug Build",
+      "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)"
+    },
+    {
+      "name": "x64-msvc-2022-release",
+      "inherits": [
+        "msvc-2022",
+        "release"
+      ],
+      "displayName": "Visual Studio Community 2022 - amd64 - Release Build",
+      "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "x64-windows-debug",
+      "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
+      "configurePreset": "x64-msvc-2022-debug",
+      "configuration": "debug"
+    },
+    {
+      "name": "x64-windows-release",
+      "displayName": "Visual Studio Community 2022 Release - amd64 - Release",
+      "configurePreset": "x64-msvc-2022-release",
+      "configuration": "Release"
+    }
+  ]
+}
