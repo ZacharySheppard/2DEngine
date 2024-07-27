@@ -2,15 +2,20 @@
   "version": 2,
   "configurePresets": [
     {
+      "name": "vcpkg",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_TOOLCHAIN_FILE": "extern/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
       "name": "x64-windows",
       "hidden": true,
       "toolset": "host=x64",
       "architecture": "x64",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "CMAKE_TOOLCHAIN_FILE": "extern/vcpkg/scripts/buildsystems/vcpkg.cmake",
         "VCPKG_TARGET_TRIPLET": "x64-windows-static"
       }
     },
@@ -31,9 +36,6 @@
     {
       "name": "msvc-2022",
       "hidden": true,
-      "inherits": [
-        "x64-windows"
-      ],
       "generator": "Visual Studio 17 2022",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl.exe",
@@ -42,9 +44,21 @@
       }
     },
     {
+      "name": "clang-16.0.0",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+        "CMAKE_C_COMPILER": "clang.exe",
+        "CMAKE_CXX_COMPILER": "clang.exe"
+      }
+    },
+    {
       "name": "x64-msvc-2022-debug",
       "inherits": [
         "msvc-2022",
+        "x64-windows",
+        "vcpkg",
         "debug"
       ],
       "displayName": "Visual Studio Community 2022 - amd64 - Debug Build",
@@ -54,23 +68,57 @@
       "name": "x64-msvc-2022-release",
       "inherits": [
         "msvc-2022",
+        "x64-windows",
+        "vcpkg",
         "release"
       ],
       "displayName": "Visual Studio Community 2022 - amd64 - Release Build",
       "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)"
+    },
+    {
+      "name": "clang-16.0.0-debug",
+      "inherits": [
+        "clang-16.0.0",
+        "vcpkg",
+        "debug"
+      ],
+      "displayName": "Clang 16.0.0 - amd64 - Debug Build",
+      "description": "Using compilers for Clang 16.0.0 (x64 architecture)"
+    },
+    {
+      "name": "clang-16.0.0-release",
+      "inherits": [
+        "clang-16.0.0",
+        "vcpkg",
+        "release"
+      ],
+      "displayName": "Clang 16.0.0 - amd64 - Release Build",
+      "description": "Using compilers for Clang 16.0.0 (x64 architecture)"
     }
   ],
   "buildPresets": [
     {
-      "name": "x64-windows-debug",
+      "name": "msvc-x64-windows-debug",
       "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
       "configurePreset": "x64-msvc-2022-debug",
       "configuration": "debug"
     },
     {
-      "name": "x64-windows-release",
+      "name": "msvc-x64-windows-release",
       "displayName": "Visual Studio Community 2022 Release - amd64 - Release",
       "configurePreset": "x64-msvc-2022-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "clang-windows-debug",
+      "displayName": "Clang 16.0.0 - amd64 - Debug",
+      "configurePreset": "clang-2022-debug",
+      "configuration": "debug"
+    },
+    {
+      "name": "clang-windows-release",
+      "displayName": "Clang 16.0.0  Release - amd64 - Release",
+      "configurePreset": "clang-2022-release",
       "configuration": "Release"
     }
   ]
