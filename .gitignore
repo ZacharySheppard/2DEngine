@@ -37,3 +37,6 @@ extern/
 
 # build and install files
 [Oo]ut/
+
+.vs
+.vscode
