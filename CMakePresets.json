@@ -112,13 +112,13 @@
     {
       "name": "clang-windows-debug",
       "displayName": "Clang 16.0.0 - amd64 - Debug",
-      "configurePreset": "clang-2022-debug",
-      "configuration": "debug"
+      "configurePreset": "clang-16.0.0-debug",
+      "configuration": "Debug"
     },
     {
       "name": "clang-windows-release",
       "displayName": "Clang 16.0.0  Release - amd64 - Release",
-      "configurePreset": "clang-2022-release",
+      "configurePreset": "clang-16.0.0-release",
       "configuration": "Release"
     }
   ]
