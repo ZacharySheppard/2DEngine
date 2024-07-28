@@ -40,3 +40,6 @@ extern/
 
 .vs
 .vscode
+
+# local lsp settings
+.clangd
