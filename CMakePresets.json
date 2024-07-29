@@ -39,8 +39,7 @@
       "generator": "Visual Studio 17 2022",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl.exe",
-        "CMAKE_CXX_COMPILER": "cl.exe",
-        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+        "CMAKE_CXX_COMPILER": "cl.exe"
       }
     },
     {
