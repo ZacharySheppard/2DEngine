@@ -1,3 +1,5 @@
+#pragma once
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -14,6 +16,8 @@ class Window {
   bool shouldClose() const noexcept;
   void swapBuffers() const noexcept;
   void pollEvents() const noexcept;
+
+  GLFWwindow* window() const noexcept;
 
  private:
   GLFWwindow* window_;

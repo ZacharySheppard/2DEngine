@@ -1,4 +1,4 @@
-
+#pragma once
 #include <string_view>
 namespace logger {
 bool initialize() noexcept;

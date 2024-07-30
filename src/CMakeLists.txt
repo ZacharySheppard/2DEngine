@@ -4,6 +4,7 @@ set(TARGET_SOURCES
     main.cpp
     Window.cpp
     Logger.cpp
+    Application.cpp
 )
 
 add_executable(${APPLICATION_NAME} ${TARGET_SOURCES})
@@ -13,6 +14,7 @@ target_link_libraries(${APPLICATION_NAME}
     glfw 
     glad::glad 
     spdlog::spdlog 
+    imgui::imgui
 )
 
 install(TARGETS ${APPLICATION_NAME}

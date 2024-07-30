@@ -1,5 +1,5 @@
+#include "Application.hpp"
 #include "Logger.hpp"
-#include "Window.hpp"
 auto main() -> int {
   const auto couldInitialize = logger::initialize();
   if (!couldInitialize) {
@@ -7,9 +7,9 @@ auto main() -> int {
   }
   logger::info("Starting Application");
   auto surface = Window(1920, 1080, "2D Engine");
-
-  while (!surface.shouldClose()) {
-    surface.pollEvents();
-    surface.swapBuffers();
+  auto app = Application(std::move(surface));
+  auto wasRunSuccessful = app.run();
+  if (!wasRunSuccessful) {
+    logger::info("Application Crash");
   }
 }
