@@ -15,7 +15,7 @@ class Window {
 
   bool shouldClose() const noexcept;
   void swapBuffers() const noexcept;
-  void pollEvents() const noexcept;
+  void pollEvents() const noexcept;  
 
   GLFWwindow* window() const noexcept;
 

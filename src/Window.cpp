@@ -51,5 +51,4 @@ Window& Window::operator=(Window&& other) {
 bool Window::shouldClose() const noexcept { return glfwWindowShouldClose(window_); }
 void Window::swapBuffers() const noexcept { glfwSwapBuffers(window_); }
 void Window::pollEvents() const noexcept { glfwPollEvents(); }
-
 GLFWwindow* Window::window() const noexcept { return window_; }
