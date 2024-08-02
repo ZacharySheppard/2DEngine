@@ -5,24 +5,16 @@
 #include "Panel.hpp"
 class HorizontalLayout {
  public:
-  HorizontalLayout(Point size, Point position) noexcept;
   bool addPanel(Panel& panel) noexcept;
 
  private:
-  std::vector<Point> positions_;
-  Point lastStart_;
-  Point size_;
-  Point position_;
+  Point lastStart_{0, 0};
 };
 
 class VerticalLayout {
  public:
-  VerticalLayout(Point size, Point position) noexcept;
   bool addPanel(Panel& panel) noexcept;
 
  private:
-  std::vector<Point> positions_;
-  Point lastStart_;
-  Point size_;
-  Point position_;
+  Point lastStart_{0, 0};
 };

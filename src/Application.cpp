@@ -23,18 +23,21 @@ bool Application::run() const noexcept {
   ImGui_ImplGlfw_InitForOpenGL(window_.window(), true);
   ImGui_ImplOpenGL3_Init();
   auto dummy = DummyPanel("Hello Riley");
-  dummy.resize({400, 200});
   auto dummy2 = DummyPanel("Hello Jasper");
-  dummy2.resize({400, 200});
-  auto layout = VerticalLayout(Point{400, 400}, Point{0, 0});
+  auto dummy3 = DummyPanel("Hello Zach");
+  dummy.resize({400, 200});
+  dummy2.resize({200, 200});
+  dummy3.resize({400, 200});
+  auto layout = VerticalLayout();
   layout.addPanel(dummy);
   layout.addPanel(dummy2);
+  layout.addPanel(dummy3);
   while (!window_.shouldClose()) {
     window_.pollEvents();
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
+    dummy3.update();
     dummy.update();
     dummy2.update();
     ImGui::Render();
