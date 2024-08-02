@@ -1,5 +1,9 @@
 #include "Application.hpp"
 
+#include "Layout.hpp"
+#include "Logger.hpp"
+#include "Panel.hpp"
+#include "glad/glad.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -7,40 +11,38 @@ Application::Application(Window window) : window_(std::move(window)) {}
 
 bool Application::run() const noexcept {
   // Setup Dear ImGui context
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    logger::info("failed to create an opengl context");
+    return false;
+  }
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
-
-  // Setup Platform/Renderer backends
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
   ImGui_ImplGlfw_InitForOpenGL(window_.window(), true);
   ImGui_ImplOpenGL3_Init();
-  float f = 0.0f;
-  int counter = 0;
-  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+  auto dummy = DummyPanel("Hello Riley");
+  dummy.resize({400, 200});
+  auto dummy2 = DummyPanel("Hello Jasper");
+  dummy2.resize({400, 200});
+  auto layout = VerticalLayout(Point{400, 400}, Point{0, 0});
+  layout.addPanel(dummy);
+  layout.addPanel(dummy2);
   while (!window_.shouldClose()) {
+    window_.pollEvents();
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-    {
-      ImGui::Begin("Hello, world!", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
 
-      ImGui::Text("This is some useful text.");  // Display some text (you can use a format strings too)
-      ImGui::SliderFloat("float", &f, 0.0f, 1.0f);             // Edit 1 float using a slider from 0.0f to 1.0f
-      ImGui::ColorEdit3("clear color", (float*)&clear_color);  // Edit 3 floats representing a color
-
-      if (ImGui::Button("Button")) {
-        counter++;
-      }
-      ImGui::SameLine();
-      ImGui::Text("counter = %d", counter);
-
-      ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-      ImGui::End();
-    }
-    window_.pollEvents();
+    dummy.update();
+    dummy2.update();
     ImGui::Render();
+    int display_w, display_h;
+    glfwGetFramebufferSize(window_.window(), &display_w, &display_h);
+    glViewport(0, 0, display_w, display_h);
+
+    glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     window_.swapBuffers();
   }
