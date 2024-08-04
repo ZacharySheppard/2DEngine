@@ -1,16 +1,29 @@
 #include "Application.hpp"
 
-#include "Layout.hpp"
+#include <memory>
+#include <vector>
+
 #include "Logger.hpp"
 #include "Panel.hpp"
 #include "glad/glad.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
+namespace {
+void resizeUI(ConfigurationPanel& cfg, OpenGLRenderPanel& rnd, float w, float h) {
+  const auto sidebarSize = Size{0.2f * w, h};
+  cfg.resize(sidebarSize);
+  const auto renderSize = Size{0.8f * w, h};
+  const auto renderPos = Point{0.2f * w, 0.f};
+  rnd.resize(renderSize);
+  rnd.move(renderPos);
+}
+}  // namespace
+
 Application::Application(Window window) : window_(std::move(window)) {}
 
 bool Application::run() const noexcept {
-  // Setup Dear ImGui context
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     logger::info("failed to create an opengl context");
     return false;
@@ -22,28 +35,22 @@ bool Application::run() const noexcept {
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
   ImGui_ImplGlfw_InitForOpenGL(window_.window(), true);
   ImGui_ImplOpenGL3_Init();
-  auto dummy = DummyPanel("Hello Riley");
-  auto dummy2 = DummyPanel("Hello Jasper");
-  auto dummy3 = DummyPanel("Hello Zach");
-  dummy.resize({400, 200});
-  dummy2.resize({200, 200});
-  dummy3.resize({400, 200});
-  auto layout = VerticalLayout();
-  layout.addPanel(dummy);
-  layout.addPanel(dummy2);
-  layout.addPanel(dummy3);
+  auto [initialWidth, initialHeight] = window_.getFrameBufferSize();
+  auto config = ConfigurationPanel("configuration", Size{initialWidth * 0.2f, initialHeight});
+  auto render = OpenGLRenderPanel("render", Size{initialWidth * 0.8f, initialHeight}, Point{initialWidth * 0.2f, 0});
+
   while (!window_.shouldClose()) {
     window_.pollEvents();
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-    dummy3.update();
-    dummy.update();
-    dummy2.update();
+    config.update();
+    render.update();
+    // render frames
     ImGui::Render();
-    int display_w, display_h;
-    glfwGetFramebufferSize(window_.window(), &display_w, &display_h);
-    glViewport(0, 0, display_w, display_h);
+    auto [width, height] = window_.getFrameBufferSize();
+    resizeUI(config, render, width, height);
+    glViewport(0, 0, width, height);
 
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

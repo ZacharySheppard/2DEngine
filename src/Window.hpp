@@ -4,6 +4,8 @@
 #include <GLFW/glfw3.h>
 
 #include <string>
+
+#include "Primitives.hpp"
 class Window {
  public:
   Window(uint32_t width, uint32_t height, std::string name) noexcept;
@@ -15,7 +17,8 @@ class Window {
 
   bool shouldClose() const noexcept;
   void swapBuffers() const noexcept;
-  void pollEvents() const noexcept;  
+  void pollEvents() const noexcept;
+  Size getFrameBufferSize() const noexcept;
 
   GLFWwindow* window() const noexcept;
 

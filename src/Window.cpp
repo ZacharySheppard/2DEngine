@@ -51,4 +51,10 @@ Window& Window::operator=(Window&& other) {
 bool Window::shouldClose() const noexcept { return glfwWindowShouldClose(window_); }
 void Window::swapBuffers() const noexcept { glfwSwapBuffers(window_); }
 void Window::pollEvents() const noexcept { glfwPollEvents(); }
+Size Window::getFrameBufferSize() const noexcept {
+  int display_w;
+  int display_h;
+  glfwGetFramebufferSize(window_, &display_w, &display_h);
+  return Size{static_cast<float>(display_w), static_cast<float>(display_h)};
+}
 GLFWwindow* Window::window() const noexcept { return window_; }

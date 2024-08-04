@@ -6,7 +6,6 @@ set(TARGET_SOURCES
     Logger.cpp
     Application.cpp
     Panel.cpp
-    Layout.cpp
 )
 
 add_executable(${APPLICATION_NAME} ${TARGET_SOURCES})
