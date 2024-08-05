@@ -1,18 +1,9 @@
 #include "RenderPanel.hpp"
 
-#include <glm/glm.hpp>
-
 #include "Logger.hpp"
+namespace {
 
-typedef struct Vertex {
-  glm::vec2 pos;
-  glm::vec3 col;
-} Vertex;
-
-static const Vertex vertices[3] = {
-    {{-0.6f, -0.4f}, {1.f, 0.f, 0.f}}, {{0.6f, -0.4f}, {0.f, 1.f, 0.f}}, {{0.f, 0.6f}, {0.f, 0.f, 1.f}}};
-
-static const char* vertex_shader_text =
+const char* vertex_shader_text =
     "#version 330\n"
     "in vec3 vCol;\n"
     "in vec2 vPos;\n"
@@ -23,7 +14,7 @@ static const char* vertex_shader_text =
     "    color = vCol;\n"
     "}\n";
 
-static const char* fragment_shader_text =
+const char* fragment_shader_text =
     "#version 330\n"
     "in vec3 color;\n"
     "out vec4 fragment;\n"
@@ -32,11 +23,13 @@ static const char* fragment_shader_text =
     "    fragment = vec4(color, 1.0);\n"
     "}\n";
 
+}  // namespace
+
 OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position) noexcept
     : name_(name), position_(position), size_(size) {
-  GLuint vertex_buffer;
-  glGenBuffers(1, &vertex_buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+  GLuint vbo_;
+  glGenBuffers(1, &vbo_);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   const GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -85,7 +78,24 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
   glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 void OpenGLRenderPanel::update() noexcept {
+  glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  const GLint vpos_location = glGetAttribLocation(program_, "vPos");
+  const GLint vcol_location = glGetAttribLocation(program_, "vCol");
+
+  glBindVertexArray(array_);
+  glEnableVertexAttribArray(vpos_location);
+  glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
+  glEnableVertexAttribArray(vcol_location);
+  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, col));
+
+  glBindTexture(GL_TEXTURE_2D, texture_);
   glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
+  glBindRenderbuffer(GL_RENDERBUFFER, rbo_);
+  glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+  glViewport(0, 0, size_.width, size_.height);
   glUseProgram(program_);
   glBindVertexArray(array_);
   glDrawArrays(GL_TRIANGLES, 0, 3);

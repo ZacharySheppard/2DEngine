@@ -8,14 +8,15 @@ void ConfigurationPanel::update() noexcept {
   auto flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration;
   ImGui::Begin(name_.c_str(), 0, flags);
   ImGui::Text("This is some useful text.");
-  ImGui::SliderFloat("float", &f_, 0.0f, 1.0f);
-  ImGui::ColorEdit3("clear color", (float*)&clear_color_);
-
-  if (ImGui::Button("Button")) {
-    counter_++;
-  }
-  ImGui::SameLine();
-  ImGui::Text("counter = %d", counter_);
+  ImGui::NewLine();
+  ImGui::SliderFloat("Offset X", &Offset.x, -.5f, .5f);
+  ImGui::SliderFloat("Offset Y", &Offset.y, -.5f, .5f);
+  ImGui::NewLine();
+  ImGui::ColorEdit3("Background", (float*)&ColorBG);
+  ImGui::NewLine();
+  ImGui::ColorEdit3("V1 color", (float*)&ColorV1);
+  ImGui::ColorEdit3("V2 color", (float*)&ColorV2);
+  ImGui::ColorEdit3("V3 color", (float*)&ColorV3);
   ImGuiIO& io = ImGui::GetIO();
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
   ImGui::End();
