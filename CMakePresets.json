@@ -43,7 +43,7 @@
       }
     },
     {
-      "name": "clang-16.0.0",
+      "name": "clang",
       "hidden": true,
       "generator": "Ninja",
       "cacheVariables": {
@@ -75,24 +75,24 @@
       "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)"
     },
     {
-      "name": "clang-16.0.0-debug",
+      "name": "clang-debug",
       "inherits": [
-        "clang-16.0.0",
+        "clang",
         "vcpkg",
         "debug"
       ],
-      "displayName": "Clang 16.0.0 - amd64 - Debug Build",
-      "description": "Using compilers for Clang 16.0.0 (x64 architecture)"
+      "displayName": "Clang - amd64 - Debug Build",
+      "description": "Using compilers for Clang (x64 architecture)"
     },
     {
-      "name": "clang-16.0.0-release",
+      "name": "clang-release",
       "inherits": [
-        "clang-16.0.0",
+        "clang",
         "vcpkg",
         "release"
       ],
-      "displayName": "Clang 16.0.0 - amd64 - Release Build",
-      "description": "Using compilers for Clang 16.0.0 (x64 architecture)"
+      "displayName": "Clang - amd64 - Release Build",
+      "description": "Using compilers for Clang (x64 architecture)"
     }
   ],
   "buildPresets": [
@@ -110,14 +110,14 @@
     },
     {
       "name": "clang-windows-debug",
-      "displayName": "Clang 16.0.0 - amd64 - Debug",
-      "configurePreset": "clang-16.0.0-debug",
+      "displayName": "Clang - amd64 - Debug",
+      "configurePreset": "clang-debug",
       "configuration": "Debug"
     },
     {
       "name": "clang-windows-release",
-      "displayName": "Clang 16.0.0  Release - amd64 - Release",
-      "configurePreset": "clang-16.0.0-release",
+      "displayName": "Clang  Release - amd64 - Release",
+      "configurePreset": "clang-release",
       "configuration": "Release"
     }
   ]
