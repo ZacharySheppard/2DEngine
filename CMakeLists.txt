@@ -10,3 +10,4 @@ find_package(spdlog CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
 add_subdirectory(src)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/fragment.GLSL ${RUNTIME_OUTPUT_DIRECTORY}/assets/shaders/fragment.GLSL COPYONLY)

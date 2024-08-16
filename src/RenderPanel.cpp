@@ -1,7 +1,10 @@
 #include "RenderPanel.hpp"
 
+#include <vector>
+
 #include "logger/Logger.hpp"
 #include "renderer/Buffers.hpp"
+
 namespace {
 
 const char* vertex_shader_text =
@@ -29,10 +32,10 @@ const char* fragment_shader_text =
 OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position) noexcept
     : name_(name), position_(position), size_(size) {
   GLuint vbo_;
-
-  glGenBuffers(1, &vbo_);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  auto buffer = VertexBuffer();
+  buffer.bind();
+  auto v = std::vector<Vertex>(std::begin(vertices), std::end(vertices));
+  buffer.assign(v);
 
   const GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
@@ -42,13 +45,14 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
   glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
   glCompileShader(fragment_shader);
 
-  program_ = glCreateProgram();
-  glAttachShader(program_, vertex_shader);
-  glAttachShader(program_, fragment_shader);
-  glLinkProgram(program_);
+  auto fs = loadFragmentShader(std::string{fragment_shader_text});
+  program_.attach(fs);
+  auto vs = loadVertexShader(std::string{vertex_shader_text});
+  program_.attach(vs);
+  program_.link();
 
-  const GLint vpos_location = glGetAttribLocation(program_, "vPos");
-  const GLint vcol_location = glGetAttribLocation(program_, "vCol");
+  const GLint vpos_location = program_.attribute("vPos");
+  const GLint vcol_location = program_.attribute("vCol");
 
   glGenVertexArrays(1, &array_);
   glBindVertexArray(array_);
@@ -83,8 +87,8 @@ void OpenGLRenderPanel::update() noexcept {
   glBindBuffer(GL_ARRAY_BUFFER, vbo_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  const GLint vpos_location = glGetAttribLocation(program_, "vPos");
-  const GLint vcol_location = glGetAttribLocation(program_, "vCol");
+  const GLint vpos_location = program_.attribute("vPos");
+  const GLint vcol_location = program_.attribute("vCol");
 
   glBindVertexArray(array_);
   glEnableVertexAttribArray(vpos_location);
@@ -98,7 +102,7 @@ void OpenGLRenderPanel::update() noexcept {
   glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   glViewport(0, 0, size_.width, size_.height);
-  glUseProgram(program_);
+  program_.bind();
   glBindVertexArray(array_);
   glDrawArrays(GL_TRIANGLES, 0, 3);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);

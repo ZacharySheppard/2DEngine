@@ -8,7 +8,7 @@ class VertexBuffer {
   void bind() const noexcept;
   template <class Container>
   void assign(Container container) const noexcept {
-    glBufferData(GL_ARRAY_BUFFER, sizeof(container), std::begin(container), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(container), std::data(container), GL_STATIC_DRAW);
   }
 
  private:

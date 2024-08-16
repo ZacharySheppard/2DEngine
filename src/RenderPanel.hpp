@@ -3,6 +3,7 @@
 
 #include "Panel.hpp"
 #include "glad/glad.h"
+#include "renderer/Shader.hpp"
 
 struct Vertex {
   glm::vec2 pos;
@@ -26,7 +27,7 @@ class OpenGLRenderPanel : public Panel {
   Point position_;
   Size size_;
   std::string name_;
-  GLuint program_;
+  Program program_;
   GLuint array_;
   GLuint vbo_;
   GLuint ibo_;
