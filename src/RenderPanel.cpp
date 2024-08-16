@@ -1,6 +1,7 @@
 #include "RenderPanel.hpp"
 
-#include "Logger.hpp"
+#include "logger/Logger.hpp"
+#include "renderer/Buffers.hpp"
 namespace {
 
 const char* vertex_shader_text =
@@ -28,6 +29,7 @@ const char* fragment_shader_text =
 OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position) noexcept
     : name_(name), position_(position), size_(size) {
   GLuint vbo_;
+
   glGenBuffers(1, &vbo_);
   glBindBuffer(GL_ARRAY_BUFFER, vbo_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);

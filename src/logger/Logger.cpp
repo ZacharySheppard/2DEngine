@@ -25,12 +25,17 @@ bool info(std::string_view message) noexcept {
   if (console == nullptr) {
     return false;
   }
+  console->info(message);
+  return true;
+};
+
+bool error(std::string_view message) noexcept {
   auto error = spdlog::get(errorLoggerTag);
   if (error == nullptr) {
     return false;
   }
-  console->info(message);
   error->info(message);
   return true;
-};
-}  // namespace log
+}
+
+}  // namespace logger

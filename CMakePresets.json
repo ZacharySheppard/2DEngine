@@ -106,7 +106,7 @@
       "name": "msvc-x64-windows-release",
       "displayName": "Visual Studio Community 2022 Release - amd64 - Release",
       "configurePreset": "x64-msvc-2022-release",
-      "configuration": "Release"
+      "configuration": "release"
     },
     {
       "name": "clang-windows-debug",

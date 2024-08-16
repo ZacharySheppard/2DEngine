@@ -4,13 +4,13 @@
 #include <vector>
 
 #include "ConfigurationPanel.hpp"
-#include "Logger.hpp"
 #include "Panel.hpp"
 #include "RenderPanel.hpp"
 #include "glad/glad.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "logger/Logger.hpp"
 namespace {
 void resizeUI(ConfigurationPanel& cfg, OpenGLRenderPanel& rnd, float w, float h) {
   const auto sidebarSize = Size{0.2f * w, h};

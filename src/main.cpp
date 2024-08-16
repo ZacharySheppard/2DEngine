@@ -1,5 +1,5 @@
 #include "Application.hpp"
-#include "Logger.hpp"
+#include "logger/Logger.hpp"
 auto main() -> int {
   const auto couldInitialize = logger::initialize();
   if (!couldInitialize) {
