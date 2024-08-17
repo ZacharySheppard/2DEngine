@@ -11,11 +11,17 @@ target_sources(${TARGET_NAME}
 )
 
 target_link_libraries(${TARGET_NAME}
+    2D_ENGINE::logger
     glfw 
     glad::glad 
     glm::glm    
 )
 
-install(TARGETS ${APPLICATION_NAME}
+target_include_directories(${TARGET_NAME}
+PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/..
+)
+
+install(TARGETS ${TARGET_NAME}
 DESTINATION .
 )

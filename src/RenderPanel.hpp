@@ -29,7 +29,7 @@ class OpenGLRenderPanel : public Panel {
   Size size_;
   std::string name_;
   Program program_;
-  GLuint array_;
+  VertexArray array_;
   VertexBuffer vbo_;
   GLuint ibo_;
   GLuint fbo_;

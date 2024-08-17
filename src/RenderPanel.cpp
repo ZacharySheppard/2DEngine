@@ -3,8 +3,10 @@
 #include <vector>
 
 #include "logger/Logger.hpp"
-
+#include <ranges>
 namespace {
+namespace ranges = std::ranges;
+namespace views = std::views;
 
 const char* vertex_shader_text =
     "#version 330\n"
@@ -30,17 +32,19 @@ const char* fragment_shader_text =
 
 OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position) noexcept
     : name_(name), position_(position), size_(size) {
-  vbo_.bind();
+  
   auto v = std::vector<Vertex>(std::begin(vertices), std::end(vertices));
-  vbo_.assign(v);
+  auto positions = VertexBuffer();
+  positions.bind();
+  std::vector<glm::vec2> pos;
+  ranges::transform(v, std::back_inserter(pos), &Vertex::pos);
+  positions.assign(pos);
 
-  const GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
-  glCompileShader(vertex_shader);
-
-  const GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
-  glCompileShader(fragment_shader);
+  auto colors = VertexBuffer();
+  colors.bind();
+  std::vector<glm::vec3> col;
+  ranges::transform(v, std::back_inserter(col), &Vertex::col);
+  colors.assign(col);
 
   auto fs = loadFragmentShader(std::string{fragment_shader_text});
   program_.attach(fs);
@@ -51,12 +55,11 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
   const uint32_t vpos_location = program_.attribute("vPos");
   const uint32_t vcol_location = program_.attribute("vCol");
 
-  glGenVertexArrays(1, &array_);
-  glBindVertexArray(array_);
-  glEnableVertexAttribArray(vpos_location);
-  glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
-  glEnableVertexAttribArray(vcol_location);
-  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, col));
+
+  array_.bind();
+  array_.addBuffer(positions, vpos_location);
+  array_.addBuffer(colors, vcol_location);
+  
 
   glGenFramebuffers(1, &fbo_);
   glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
@@ -81,18 +84,25 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
   glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 void OpenGLRenderPanel::update() noexcept {
-  vbo_.bind();
   auto v = std::vector<Vertex>(std::begin(vertices), std::end(vertices));
-  vbo_.assign(v);
+  auto positions = VertexBuffer();
+  positions.bind();
+  std::vector<glm::vec2> pos;
+  ranges::transform(v, std::back_inserter(pos), &Vertex::pos);
+  positions.assign(pos);
 
-  const GLint vpos_location = program_.attribute("vPos");
-  const GLint vcol_location = program_.attribute("vCol");
+  auto colors = VertexBuffer();
+  colors.bind();
+  std::vector<glm::vec3> col;
+  ranges::transform(v, std::back_inserter(col), &Vertex::col);
+  colors.assign(col);
+  
+  const uint32_t vpos_location = program_.attribute("vPos");
+  const uint32_t vcol_location = program_.attribute("vCol");
 
-  glBindVertexArray(array_);
-  glEnableVertexAttribArray(vpos_location);
-  glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
-  glEnableVertexAttribArray(vcol_location);
-  glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, col));
+  array_.bind();
+  array_.addBuffer(positions, vpos_location);
+  array_.addBuffer(colors, vcol_location);
 
   glBindTexture(GL_TEXTURE_2D, texture_);
   glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
@@ -101,7 +111,7 @@ void OpenGLRenderPanel::update() noexcept {
   glClear(GL_COLOR_BUFFER_BIT);
   glViewport(0, 0, size_.width, size_.height);
   program_.bind();
-  glBindVertexArray(array_);
+  array_.bind();
   glDrawArrays(GL_TRIANGLES, 0, 3);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   ImGui::SetNextWindowSize({size_.width, size_.height});
