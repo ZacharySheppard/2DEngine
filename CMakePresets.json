@@ -97,16 +97,16 @@
   ],
   "buildPresets": [
     {
-      "name": "msvc-x64-windows-debug",
-      "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
-      "configurePreset": "x64-msvc-2022-debug",
-      "configuration": "debug"
-    },
-    {
       "name": "msvc-x64-windows-release",
       "displayName": "Visual Studio Community 2022 Release - amd64 - Release",
       "configurePreset": "x64-msvc-2022-release",
-      "configuration": "release"
+      "configuration": "Release"
+    },
+    {
+      "name": "msvc-x64-windows-debug",
+      "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
+      "configurePreset": "x64-msvc-2022-debug",
+      "configuration": "Debug"
     },
     {
       "name": "clang-windows-debug",
