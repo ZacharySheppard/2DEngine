@@ -1,6 +1,6 @@
 #pragma once
 #include <iterator>
-
+#include "logger/logger.hpp"
 #include "glad/glad.h"
 class VertexBuffer {
  public:
@@ -8,8 +8,9 @@ class VertexBuffer {
   void bind() const noexcept;
   template <class Container>
   void assign(Container container) const noexcept {
-    const auto length = std::size(container);
-    if (length < 1) {
+    const auto length = std::ssize(container);
+    if (length == 0) {
+      logger::info("skipped buffer with 0 length")
       return;
     }
     const auto size = length * sizeof(*std::begin(container));
