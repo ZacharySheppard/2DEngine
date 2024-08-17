@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "logger/Logger.hpp"
-#include "renderer/Buffers.hpp"
 
 namespace {
 
@@ -31,11 +30,9 @@ const char* fragment_shader_text =
 
 OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position) noexcept
     : name_(name), position_(position), size_(size) {
-  GLuint vbo_;
-  auto buffer = VertexBuffer();
-  buffer.bind();
+  vbo_.bind();
   auto v = std::vector<Vertex>(std::begin(vertices), std::end(vertices));
-  buffer.assign(v);
+  vbo_.assign(v);
 
   const GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
@@ -51,8 +48,8 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
   program_.attach(vs);
   program_.link();
 
-  const GLint vpos_location = program_.attribute("vPos");
-  const GLint vcol_location = program_.attribute("vCol");
+  const uint32_t vpos_location = program_.attribute("vPos");
+  const uint32_t vcol_location = program_.attribute("vCol");
 
   glGenVertexArrays(1, &array_);
   glBindVertexArray(array_);
@@ -84,8 +81,9 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
   glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 void OpenGLRenderPanel::update() noexcept {
-  glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  vbo_.bind();
+  auto v = std::vector<Vertex>(std::begin(vertices), std::end(vertices));
+  vbo_.assign(v);
 
   const GLint vpos_location = program_.attribute("vPos");
   const GLint vcol_location = program_.attribute("vCol");
@@ -109,7 +107,7 @@ void OpenGLRenderPanel::update() noexcept {
   ImGui::SetNextWindowSize({size_.width, size_.height});
   ImGui::SetNextWindowPos({position_.x, position_.y});
   auto flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration;
-  ImGui::Begin(name_.c_str(), 0, flags);
+  ImGui::Begin(name_.c_str(), nullptr, flags);
   ImGui::Image((ImTextureID)texture_, ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
   ImGui::End();
 }

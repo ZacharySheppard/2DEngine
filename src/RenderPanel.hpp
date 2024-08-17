@@ -4,6 +4,7 @@
 #include "Panel.hpp"
 #include "glad/glad.h"
 #include "renderer/Shader.hpp"
+#include "renderer/Buffers.hpp"
 
 struct Vertex {
   glm::vec2 pos;
@@ -29,7 +30,7 @@ class OpenGLRenderPanel : public Panel {
   std::string name_;
   Program program_;
   GLuint array_;
-  GLuint vbo_;
+  VertexBuffer vbo_;
   GLuint ibo_;
   GLuint fbo_;
   GLuint rbo_;

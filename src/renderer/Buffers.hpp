@@ -1,4 +1,4 @@
-
+#pragma once
 #include <iterator>
 
 #include "glad/glad.h"
@@ -8,7 +8,12 @@ class VertexBuffer {
   void bind() const noexcept;
   template <class Container>
   void assign(Container container) const noexcept {
-    glBufferData(GL_ARRAY_BUFFER, sizeof(container), std::data(container), GL_STATIC_DRAW);
+    const auto length = std::size(container);
+    if (length < 1) {
+      return;
+    }
+    const auto size = length * sizeof(*std::begin(container));
+    glBufferData(GL_ARRAY_BUFFER, size, std::data(container), GL_STATIC_DRAW);
   }
 
  private:
