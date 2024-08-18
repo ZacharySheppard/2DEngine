@@ -28,37 +28,17 @@ const char* fragment_shader_text =
     "    fragment = vec4(color, 1.0);\n"
     "}\n";
 
+
 }  // namespace
 
 OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position) noexcept
     : name_(name), position_(position), size_(size) {
-  
-  auto v = std::vector<Vertex>(std::begin(vertices), std::end(vertices));
-  auto positions = VertexBuffer();
-  positions.bind();
-  std::vector<glm::vec2> pos;
-  ranges::transform(v, std::back_inserter(pos), &Vertex::pos);
-  positions.assign(pos);
-
-  auto colors = VertexBuffer();
-  colors.bind();
-  std::vector<glm::vec3> col;
-  ranges::transform(v, std::back_inserter(col), &Vertex::col);
-  colors.assign(col);
 
   auto fs = loadFragmentShader(std::string{fragment_shader_text});
   program_.attach(fs);
   auto vs = loadVertexShader(std::string{vertex_shader_text});
   program_.attach(vs);
   program_.link();
-
-  const uint32_t vpos_location = program_.attribute("vPos");
-  const uint32_t vcol_location = program_.attribute("vCol");
-
-
-  array_.bind();
-  array_.addBuffer(positions, vpos_location);
-  array_.addBuffer(colors, vcol_location);
   
 
   glGenFramebuffers(1, &fbo_);
@@ -66,7 +46,8 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
 
   glGenTextures(1, &texture_);
   glBindTexture(GL_TEXTURE_2D, texture_);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size_.width, size_.height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size_.width, size_.height, 0, GL_RGB, 
+  GL_UNSIGNED_BYTE, nullptr);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_, 0);
@@ -96,7 +77,6 @@ void OpenGLRenderPanel::update() noexcept {
   std::vector<glm::vec3> col;
   ranges::transform(v, std::back_inserter(col), &Vertex::col);
   colors.assign(col);
-  
   const uint32_t vpos_location = program_.attribute("vPos");
   const uint32_t vcol_location = program_.attribute("vCol");
 
