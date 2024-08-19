@@ -1,8 +1,15 @@
 #include "Shader.hpp"
 
+#include <format>
 #include <fstream>
-std::string loadFromFIle(fs::path path) {
-  auto filestream = std::ifstream(path);
+
+#include "logger/Logger.hpp"
+
+std::expected<std::string, ParseError> readFile(fs::path path) {
+  if (!fs::exists(path)) {
+    return std::unexpected(ParseError::FileNotFound);
+  }
+  const auto filestream = std::ifstream(path);
   std::stringstream buffer;
   buffer << filestream.rdbuf();
   return buffer.str();
@@ -22,6 +29,25 @@ uint32_t loadFragmentShader(const std::string& source) {
   glShaderSource(fragmentShader, 1, &bytes, nullptr);
   glCompileShader(fragmentShader);
   return fragmentShader;
+}
+
+uint32_t makeShader(ShaderType type, fs::path path) {
+  const auto source = readFile(path);
+  if (!source.has_value()) {
+    const std::string message = std::format("Unable to load shader with path {}", path.string());
+    logger::error(message);
+    return 0;
+  }
+  switch (type) {
+    case ShaderType::Fragment:
+      return loadFragmentShader(source.value());
+    case ShaderType::Vertex:
+      return loadVertexShader(source.value());
+    default:
+      const std::string message = std::format("Unknown shader type");
+      logger::error(message);
+      return 0;
+  }
 }
 
 Program::Program() noexcept : id_(glCreateProgram()) {}

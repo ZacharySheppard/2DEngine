@@ -2,16 +2,17 @@
 
 #include <glad/glad.h>
 
+#include <expected>
 #include <filesystem>
 #include <functional>
 #include <string_view>
 namespace fs = std::filesystem;
-[[nodiscard]] std::string loadFromFile(fs::path path);
 
-using ShaderLoader = std::function<uint32_t(const std::string& source)>();
+enum class ParseError { FileNotFound };
+enum class ShaderType { Fragment, Vertex };
 
-uint32_t loadVertexShader(const std::string& source);
-uint32_t loadFragmentShader(const std::string& source);
+uint32_t makeShader(ShaderType type, fs::path path);
+
 class Program {
  public:
   Program() noexcept;

@@ -1,53 +1,30 @@
 #include "RenderPanel.hpp"
 
+#include <ranges>
 #include <vector>
 
 #include "logger/Logger.hpp"
-#include <ranges>
 namespace {
 namespace ranges = std::ranges;
 namespace views = std::views;
-
-const char* vertex_shader_text =
-    "#version 330\n"
-    "in vec3 vCol;\n"
-    "in vec2 vPos;\n"
-    "out vec3 color;\n"
-    "void main()\n"
-    "{\n"
-    "    gl_Position = vec4(vPos, 0.0, 1.0);\n"
-    "    color = vCol;\n"
-    "}\n";
-
-const char* fragment_shader_text =
-    "#version 330\n"
-    "in vec3 color;\n"
-    "out vec4 fragment;\n"
-    "void main()\n"
-    "{\n"
-    "    fragment = vec4(color, 1.0);\n"
-    "}\n";
-
-
 }  // namespace
 
 OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position) noexcept
     : name_(name), position_(position), size_(size) {
+  // TODO load from source file, update cmake
 
-  auto fs = loadFragmentShader(std::string{fragment_shader_text});
+  const auto fs = makeShader(ShaderType::Fragment, "assets/shaders/fragment.GLSL");
   program_.attach(fs);
-  auto vs = loadVertexShader(std::string{vertex_shader_text});
+  const auto vs = makeShader(ShaderType::Vertex, "assets/shaders/vertex.GLSL");
   program_.attach(vs);
   program_.link();
-  
 
   glGenFramebuffers(1, &fbo_);
   glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
 
   glGenTextures(1, &texture_);
   glBindTexture(GL_TEXTURE_2D, texture_);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size_.width, size_.height, 0, GL_RGB, 
-  GL_UNSIGNED_BYTE, nullptr);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size_.width, size_.height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_, 0);
@@ -77,6 +54,7 @@ void OpenGLRenderPanel::update() noexcept {
   std::vector<glm::vec3> col;
   ranges::transform(v, std::back_inserter(col), &Vertex::col);
   colors.assign(col);
+
   const uint32_t vpos_location = program_.attribute("vPos");
   const uint32_t vcol_location = program_.attribute("vCol");
 
