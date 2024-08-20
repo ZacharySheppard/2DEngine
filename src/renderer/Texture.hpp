@@ -2,10 +2,11 @@
 #include <logger/Logger.hpp>
 #include <vector>
 
-class FrameBufferTexture2D {
+#include "Buffers.hpp"
+class Texture2D {
  public:
-  FrameBufferTexture2D() noexcept;
-  void configure(float width, float height) const noexcept;
+  Texture2D(float width, float height) noexcept;
+  void attachFrameBuffer(const FrameBuffer& fb) const noexcept;
   uint32_t id() const noexcept;
   void bind() const noexcept;
 

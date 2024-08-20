@@ -17,11 +17,11 @@ class OpenGLRenderPanel : public Panel {
   OpenGLRenderPanel(std::string name, Size size, Point position) noexcept;
   void move(Point topleft) noexcept override;
   void resize(Size size) noexcept override;
-  Size size() const noexcept override;
-  Point position() const noexcept override;
+  [[nodiscard]] Size size() const noexcept override;
+  [[nodiscard]] Point position() const noexcept override;
   void update() noexcept override;
 
-  Vertex vertices[3] = {
+  std::vector<Vertex> vertices = {
       {{-0.6f, -0.4f}, {1.f, 0.f, 0.f}}, {{0.6f, -0.4f}, {0.f, 1.f, 0.f}}, {{0.f, 0.6f}, {0.f, 0.f, 1.f}}};
   glm::vec3 bgColor;
 
@@ -32,6 +32,6 @@ class OpenGLRenderPanel : public Panel {
   Program program_;
   VertexArray array_;
   FrameBuffer fbo_;
-  FrameBufferTexture2D texture_;
+  Texture2D texture_;
   RenderBuffer rbo_;
 };

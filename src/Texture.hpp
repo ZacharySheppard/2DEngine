@@ -7,9 +7,9 @@ class Texture {
   virtual void attachFrameBuffer() = 0;
 };
 
-class FrameBufferTexture2D : public Texture {
+class Texture2D : public Texture {
  public:
-  FrameBufferTexture2D() noexcept;
+  Texture2D() noexcept;
   void bind() const noexcept override;
   void attachFrameBuffer() override;
 };

@@ -23,11 +23,15 @@ void VertexArray::addBuffer(const VertexBuffer& buffer, uint32_t location) const
 FrameBuffer::FrameBuffer() noexcept : id_(0) { glGenFramebuffers(1, &id_); }
 void FrameBuffer::bind() const noexcept { glBindFramebuffer(GL_FRAMEBUFFER, id_); }
 
-RenderBuffer::RenderBuffer() noexcept : id_(0) { glGenRenderbuffers(1, &id_); }
-
-void RenderBuffer::configure(float width, float height) const noexcept {
+RenderBuffer::RenderBuffer(float width, float height) noexcept : id_(0) {
+  glGenRenderbuffers(1, &id_);
   bind();
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+}
+
+void RenderBuffer::attachFrameBuffer(const FrameBuffer& fb) const noexcept {
+  fb.bind();
+  bind();
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, id_);
 }
 void RenderBuffer::bind() const noexcept { glBindRenderbuffer(GL_RENDERBUFFER, id_); }

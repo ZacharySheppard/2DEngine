@@ -75,8 +75,8 @@ class FrameBuffer {
 
 class RenderBuffer {
  public:
-  RenderBuffer() noexcept;
-  void configure(float width, float height) const noexcept;
+  RenderBuffer(float width, float height) noexcept;
+  void attachFrameBuffer(const FrameBuffer& fb) const noexcept;
   void bind() const noexcept;
 
  private:
