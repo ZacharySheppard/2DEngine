@@ -24,26 +24,16 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
     logger::info("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
 }
 void OpenGLRenderPanel::update() noexcept {
-  auto positions = VertexBuffer(vertices | views::transform(&Vertex::pos));
-  auto colors = VertexBuffer(vertices | views::transform(&Vertex::col));
-
-  const uint32_t vpos_location = program_.attribute("vPos");
-  const uint32_t vcol_location = program_.attribute("vCol");
-
-  array_.bind();
-  array_.addBuffer(positions, vpos_location);
-  array_.addBuffer(colors, vcol_location);
-
   texture_.bind();
   fbo_.bind();
   rbo_.bind();
   program_.bind();
-
   glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   glViewport(0, 0, size_.width, size_.height);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  drawQuad_(vertices);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
   ImGui::SetNextWindowSize({size_.width, size_.height});
   ImGui::SetNextWindowPos({position_.x, position_.y});
   auto flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration;

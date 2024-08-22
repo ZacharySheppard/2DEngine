@@ -43,6 +43,7 @@ bool Application::run() const noexcept {
   auto originV1 = render.vertices[0].pos;
   auto originV2 = render.vertices[1].pos;
   auto originV3 = render.vertices[2].pos;
+  auto originV4 = render.vertices[3].pos;
 
   while (!window_.shouldClose()) {
     window_.pollEvents();
@@ -57,6 +58,7 @@ bool Application::run() const noexcept {
     render.vertices[0].pos = glm::vec2{originV1.x + config.Offset.x, originV1.y + config.Offset.y};
     render.vertices[1].pos = glm::vec2{originV2.x + config.Offset.x, originV2.y + config.Offset.y};
     render.vertices[2].pos = glm::vec2{originV3.x + config.Offset.x, originV3.y + config.Offset.y};
+    render.vertices[3].pos = glm::vec2{originV4.x + config.Offset.x, originV4.y + config.Offset.y};
     render.bgColor = {config.ColorBG.x, config.ColorBG.y, config.ColorBG.z};
     render.update();
     // render frames

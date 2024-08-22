@@ -8,6 +8,7 @@ target_sources(${TARGET_NAME}
     PUBLIC
         Buffers.cpp
         Shader.cpp
+        Draw.cpp
         Texture.cpp
 )
 
