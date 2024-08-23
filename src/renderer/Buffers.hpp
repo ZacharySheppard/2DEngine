@@ -76,6 +76,7 @@ class VertexArray {
 class FrameBuffer {
  public:
   FrameBuffer() noexcept;
+  ~FrameBuffer() noexcept;
   void bind() const noexcept;
 
  private:

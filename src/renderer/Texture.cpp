@@ -16,4 +16,5 @@ void Texture2D::attachFrameBuffer(const FrameBuffer& fb) const noexcept {
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id_, 0);
 }
 uint32_t Texture2D::id() const noexcept { return id_; }
+
 void Texture2D::bind() const noexcept { glBindTexture(GL_TEXTURE_2D, id_); }

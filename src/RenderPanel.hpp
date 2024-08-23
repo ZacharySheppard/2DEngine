@@ -28,9 +28,6 @@ class OpenGLRenderPanel : public Panel {
   DrawQuad drawQuad_;
   Size size_;
   std::string name_;
-  Program program_;
-  VertexArray array_;
-  FrameBuffer fbo_;
   Texture2D texture_;
   RenderBuffer rbo_;
 };

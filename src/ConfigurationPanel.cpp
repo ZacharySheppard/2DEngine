@@ -18,7 +18,8 @@ void ConfigurationPanel::update() noexcept {
   ImGui::ColorEdit3("V2 color", (float*)&ColorV2);
   ImGui::ColorEdit3("V3 color", (float*)&ColorV3);
   ImGuiIO& io = ImGui::GetIO();
-  ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+
+  ImGui::Text("60 Frame Average %.1f FPS", io.Framerate);
   ImGui::End();
 }
 

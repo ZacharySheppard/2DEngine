@@ -46,6 +46,8 @@ void VertexArray::addBuffer(const VertexBuffer& buffer, uint32_t location) const
 
 FrameBuffer::FrameBuffer() noexcept : id_(0) { glGenFramebuffers(1, &id_); }
 
+FrameBuffer::~FrameBuffer() noexcept { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
+
 void FrameBuffer::bind() const noexcept { glBindFramebuffer(GL_FRAMEBUFFER, id_); }
 
 RenderBuffer::RenderBuffer(float width, float height) noexcept : id_(0) {

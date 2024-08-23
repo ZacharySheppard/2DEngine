@@ -27,6 +27,8 @@ bool DrawQuad::operator()(std::vector<Vertex> vertices) {
   vao.addBuffer(positions, positionLocation);
   vao.addBuffer(colors, colorLocation);
   indexBuffer.bind();
+
+  program_.bind();
   glDrawElements(GL_TRIANGLES, quadIndices.size(), GL_UNSIGNED_INT, (void*)0);
   return true;
 }

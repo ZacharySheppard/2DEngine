@@ -18,7 +18,7 @@ class ConfigurationPanel : public Panel {
   ImVec4 ColorV1 = ImVec4(0.f, 0.f, 1.f, 1.00f);
 
  private:
-  Point position_;
+    Point position_;
   Size size_;
   std::string name_;
 };

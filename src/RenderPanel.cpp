@@ -10,29 +10,23 @@ namespace views = std::views;
 }  // namespace
 
 OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position) noexcept
-    : name_(name), position_(position), size_(size), rbo_(size.width, size.height), texture_(size.width, size.height) {
-  const auto fs = makeShader(ShaderType::Fragment, "assets/shaders/fragment.GLSL");
-  program_.attach(fs);
-  const auto vs = makeShader(ShaderType::Vertex, "assets/shaders/vertex.GLSL");
-  program_.attach(vs);
-  program_.link();
+    : name_(name), position_(position), size_(size), rbo_(size.width, size.height), texture_(size.width, size.height) {}
 
-  texture_.attachFrameBuffer(fbo_);
-  rbo_.attachFrameBuffer(fbo_);
-
-  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    logger::info("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
-}
 void OpenGLRenderPanel::update() noexcept {
-  texture_.bind();
-  fbo_.bind();
-  rbo_.bind();
-  program_.bind();
-  glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
-  glViewport(0, 0, size_.width, size_.height);
-  drawQuad_(vertices);
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  {
+    const auto framebuffer = FrameBuffer();
+    texture_.attachFrameBuffer(framebuffer);
+    rbo_.attachFrameBuffer(framebuffer);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+      logger::info("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+    texture_.bind();
+    framebuffer.bind();
+    rbo_.bind();
+    glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(0, 0, size_.width, size_.height);
+    drawQuad_(vertices);
+  }
 
   ImGui::SetNextWindowSize({size_.width, size_.height});
   ImGui::SetNextWindowPos({position_.x, position_.y});
