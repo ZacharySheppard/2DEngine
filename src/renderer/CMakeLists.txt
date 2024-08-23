@@ -10,6 +10,7 @@ target_sources(${TARGET_NAME}
         Shader.cpp
         Draw.cpp
         Texture.cpp
+        Camera.cpp
 )
 
 target_link_libraries(${TARGET_NAME}

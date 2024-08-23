@@ -5,6 +5,7 @@
 #include <expected>
 #include <filesystem>
 #include <functional>
+#include <glm/glm.hpp>
 #include <string_view>
 namespace fs = std::filesystem;
 
@@ -18,6 +19,7 @@ class Program {
   Program() noexcept;
   void attach(uint32_t id) const noexcept;
   uint32_t attribute(std::string name) const noexcept;
+  uint32_t uniform(std::string name, glm::mat4 value) const noexcept;
   void link() const noexcept;
   void bind() const noexcept;
 

@@ -2,6 +2,7 @@
 
 #include <format>
 #include <fstream>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "logger/Logger.hpp"
 
@@ -53,5 +54,10 @@ uint32_t makeShader(ShaderType type, fs::path path) {
 Program::Program() noexcept : id_(glCreateProgram()) {}
 void Program::attach(uint32_t id) const noexcept { glAttachShader(id_, id); }
 uint32_t Program::attribute(std::string name) const noexcept { return glGetAttribLocation(id_, name.c_str()); }
+uint32_t Program::uniform(std::string name, glm::mat4 value) const noexcept {
+  int location = glGetUniformLocation(id_, name.c_str());
+  glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
+  return location;
+}
 void Program::link() const noexcept { glLinkProgram(id_); }
 void Program::bind() const noexcept { glUseProgram(id_); }
