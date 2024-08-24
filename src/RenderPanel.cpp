@@ -16,8 +16,7 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
       size_(size),
       rbo_(size.width, size.height),
       texture_(size.width, size.height),
-      camera_(size.width, size.height),
-      cameraPosition_{0.0f, 0.0f, 0.0f} {}
+      camera_(size.width, size.height) {}
 
 void OpenGLRenderPanel::update() noexcept {
   {
