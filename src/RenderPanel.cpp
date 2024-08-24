@@ -1,5 +1,6 @@
 #include "RenderPanel.hpp"
 
+#include <format>
 #include <ranges>
 #include <vector>
 
@@ -15,7 +16,8 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
       size_(size),
       rbo_(size.width, size.height),
       texture_(size.width, size.height),
-      camera_(size.width, size.height) {}
+      camera_(size.width, size.height),
+      cameraPosition_{0.0f, 0.0f, 0.0f} {}
 
 void OpenGLRenderPanel::update() noexcept {
   {
@@ -37,8 +39,19 @@ void OpenGLRenderPanel::update() noexcept {
   ImGui::SetNextWindowPos({position_.x, position_.y});
   auto flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration;
   ImGui::Begin(name_.c_str(), nullptr, flags);
+  updateCameraPosition();
   ImGui::Image((ImTextureID)texture_.id(), ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
   ImGui::End();
+}
+
+void OpenGLRenderPanel::updateCameraPosition() {
+  if (ImGui::IsMouseDragging(0) && ImGui::IsWindowFocused()) {
+    auto delta = ImGui::GetMouseDragDelta();
+    const auto target = camera_.getCameraTarget();
+    const auto diff = glm::vec3{(2 * delta.x / size_.width), (2 * delta.y / size_.height), 0.0f};
+    camera_.setCameraPosition(target + diff);
+    ImGui::ResetMouseDragDelta();
+  }
 }
 
 void OpenGLRenderPanel::move(Point topleft) noexcept { position_ = topleft; }

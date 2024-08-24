@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <thread>
 
 #include "Panel.hpp"
 #include "glad/glad.h"
@@ -8,7 +9,6 @@
 #include "renderer/Draw.hpp"
 #include "renderer/Shader.hpp"
 #include "renderer/Texture.hpp"
-
 class OpenGLRenderPanel : public Panel {
  public:
   OpenGLRenderPanel(std::string name, Size size, Point position) noexcept;
@@ -25,6 +25,7 @@ class OpenGLRenderPanel : public Panel {
   glm::vec3 bgColor;
 
  private:
+  void updateCameraPosition();
   Point position_;
   DrawQuad drawQuad_;
   OrthographicCamera camera_;
@@ -32,4 +33,6 @@ class OpenGLRenderPanel : public Panel {
   std::string name_;
   Texture2D texture_;
   RenderBuffer rbo_;
+  glm::vec3 cameraPosition_;
+  std::jthread handleMouseEvents_;
 };
