@@ -45,12 +45,19 @@ void OpenGLRenderPanel::update() noexcept {
 }
 
 void OpenGLRenderPanel::updateCameraPosition() {
+  const auto zoom = camera_.zoom();
   if (ImGui::IsMouseDragging(0) && ImGui::IsWindowFocused()) {
     auto delta = ImGui::GetMouseDragDelta();
-    const auto target = camera_.getCameraTarget();
-    const auto diff = glm::vec3{(2 * delta.x / size_.width), (2 * delta.y / size_.height), 0.0f};
-    camera_.setCameraPosition(target + diff);
+    const auto target = camera_.target();
+    const auto aspectRatio = size_.width / size_.height;
+    const auto diff =
+        glm::vec3{(2 * zoom * aspectRatio * delta.x / size_.width), (2 * zoom * delta.y / size_.height), 0.0f};
+    camera_.setTarget(target + diff);
     ImGui::ResetMouseDragDelta();
+  }
+  float delta = ImGui::GetIO().MouseWheel;
+  if (ImGui::IsWindowFocused() && delta != 0) {
+    camera_.setZoom(zoom + delta);
   }
 }
 
