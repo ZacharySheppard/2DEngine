@@ -14,7 +14,7 @@ glm::mat4 OrthographicCamera::mvp() const noexcept { return proj_ * view_ * glm:
 
 float OrthographicCamera::zoom() const noexcept { return zoom_; }
 void OrthographicCamera::setZoom(float zoom) noexcept {
-  zoom_ = std::max(zoom, 0.0f);
+  zoom_ = std::max(zoom, 1.0f);
   proj_ = glm::ortho(zoom_ * aspectRatio_, -zoom_ * aspectRatio_, -1.0f * zoom_, zoom_);
 }
 

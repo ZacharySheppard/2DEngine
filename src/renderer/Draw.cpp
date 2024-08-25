@@ -5,6 +5,7 @@
 #include "Camera.hpp"
 
 namespace views = std::views;
+namespace ranges = std::ranges;
 
 DrawQuad::DrawQuad() noexcept {
   const auto fs = makeShader(ShaderType::Fragment, "assets/shaders/fragment.GLSL");
@@ -25,6 +26,7 @@ bool DrawQuad::operator()(std::vector<Vertex> vertices, glm::mat4 mvp) {
   const uint32_t positionLocation = program_.attribute("vPos");
   const uint32_t colorLocation = program_.attribute("vCol");
   program_.uniform("mvp", mvp);
+
   vao.bind();
   vao.addBuffer(positions, positionLocation);
   vao.addBuffer(colors, colorLocation);
@@ -43,17 +45,20 @@ DrawLine::DrawLine() noexcept {
   program_.link();
 }
 
-bool DrawLine::operator()(std::vector<Line> lines) {
+bool DrawLine::operator()(std::vector<Vertex> lines, glm::mat4 mvp) {
   const auto vao = VertexArray();
-  const auto positions = VertexBuffer(lines | views::transform(&Line::pos));
-  const auto colors = VertexBuffer(lines | views::transform(&Line::color));
+  const auto positions = VertexBuffer(lines | views::transform(&Vertex::pos));
+  const auto colors = VertexBuffer(lines | views::transform(&Vertex::col));
 
   const uint32_t positionLocation = program_.attribute("vPos");
   const uint32_t colorLocation = program_.attribute("vCol");
+  program_.uniform("mvp", mvp);
 
   vao.bind();
   vao.addBuffer(positions, positionLocation);
   vao.addBuffer(colors, colorLocation);
-  glDrawArrays(GL_LINE, 0, 2);
+
+  program_.bind();
+  glDrawArrays(GL_LINES, 0, lines.size());
   return true;
 }

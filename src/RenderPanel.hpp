@@ -26,8 +26,11 @@ class OpenGLRenderPanel : public Panel {
 
  private:
   void updateCameraPosition();
+  void recalculateGrid();
+  std::vector<Vertex> grid_;
   Point position_;
   DrawQuad drawQuad_;
+  DrawLine drawLine_;
   OrthographicCamera camera_;
   Size size_;
   std::string name_;

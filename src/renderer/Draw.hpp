@@ -18,14 +18,9 @@ struct DrawQuad {
   Program program_;
 };
 
-struct Line {
-  glm::vec2 pos;
-  glm::vec3 color;
-};
-
 struct DrawLine {
   DrawLine() noexcept;
-  bool operator()(std::vector<Line> lines);
+  bool operator()(std::vector<Vertex> lines, glm::mat4 mvp);
 
  private:
   Program program_;

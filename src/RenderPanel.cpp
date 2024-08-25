@@ -31,6 +31,7 @@ void OpenGLRenderPanel::update() noexcept {
     glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, size_.width, size_.height);
+    recalculateGrid();
     drawQuad_(vertices, camera_.mvp());
   }
 
@@ -49,8 +50,9 @@ void OpenGLRenderPanel::updateCameraPosition() {
     auto delta = ImGui::GetMouseDragDelta();
     const auto target = camera_.target();
     const auto aspectRatio = size_.width / size_.height;
-    const auto diff =
-        glm::vec3{(2 * zoom * aspectRatio * delta.x / size_.width), (2 * zoom * delta.y / size_.height), 0.0f};
+    const auto diff = glm::vec3{(2.0f * zoom * aspectRatio * delta.x / size_.width),  // x
+                                (2.0f * zoom * delta.y / size_.height),               // y
+                                0.0f};                                                // z
     camera_.setTarget(target + diff);
     ImGui::ResetMouseDragDelta();
   }
@@ -58,6 +60,34 @@ void OpenGLRenderPanel::updateCameraPosition() {
   if (ImGui::IsWindowFocused() && delta != 0) {
     camera_.setZoom(zoom + delta);
   }
+}
+
+void OpenGLRenderPanel::recalculateGrid() {
+  const auto zoom = std::floor(camera_.zoom());
+  const auto target = camera_.target();
+  const auto aspectRatio = size_.width / size_.height;
+  const int maxX = zoom * aspectRatio;
+  const int maxY = static_cast<int>(zoom);
+  const auto divisionsX = std::views::iota(0, maxX + 1);
+  const auto divisionsY = std::views::iota(0, maxY + 1);
+  const auto color = glm::vec3{0.8f, 0.8f, 0.8f};
+  const auto makeVertex = [color](glm::vec2 pos) { return Vertex{pos, color}; };
+  auto lines = std::vector<Vertex>();
+  for (const auto division : divisionsX) {
+    const auto left = std::lroundf(target.x - (division * aspectRatio));
+    const auto right = std::lroundf(target.x + (division * aspectRatio));
+    const auto vertices = std::vector{makeVertex({left, zoom}), makeVertex({left, -zoom}), makeVertex({right, zoom}),
+                                      makeVertex({right, -zoom})};
+    lines.append_range(vertices);
+  }
+  // for (const auto division : divisionsY) {
+  //   const auto vertices = std::vector{Vertex{{zoom * aspectRatio, target.y + division}, color},
+  //                                     Vertex{{-zoom * aspectRatio, target.y + division}, color},
+  //                                     Vertex{{zoom * aspectRatio, target.y - division}, color},
+  //                                     Vertex{{-zoom * aspectRatio, target.y - division}, color}};
+  // lines.append_range(vertices);
+  // }
+  drawLine_(lines, camera_.mvp());
 }
 
 void OpenGLRenderPanel::move(Point topleft) noexcept { position_ = topleft; }
