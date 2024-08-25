@@ -17,7 +17,7 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
       rbo_(size.width, size.height),
       texture_(size.width, size.height),
       camera_(size.width, size.height) {
-  recalculateGrid();
+  grid_.recalculate(camera_);
 }
 
 void OpenGLRenderPanel::update() noexcept {
@@ -33,7 +33,7 @@ void OpenGLRenderPanel::update() noexcept {
     glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, size_.width, size_.height);
-    drawLine_(grid_, camera_.mvp());
+    drawLine_(grid_.vertices(), camera_.mvp());
     drawQuad_(vertices, camera_.mvp());
   }
 
@@ -67,21 +67,27 @@ void OpenGLRenderPanel::updateCameraPosition() {
   }
 
   if (hasChanged) {
-    recalculateGrid();
+    grid_.recalculate(camera_);
   }
 }
 
-void OpenGLRenderPanel::recalculateGrid() {
-  const auto zoom = std::floor(camera_.zoom());
-  const auto target = camera_.target();
-  const auto aspectRatio = size_.width / size_.height;
+void OpenGLRenderPanel::move(Point topleft) noexcept { position_ = topleft; }
+void OpenGLRenderPanel::resize(Size size) noexcept { size_ = size; }
+Size OpenGLRenderPanel::size() const noexcept { return size_; }
+Point OpenGLRenderPanel::position() const noexcept { return position_; }
+
+void Grid::recalculate(const OrthographicCamera& cam) {
+  const auto zoom = cam.zoom();
+  const auto target = cam.target();
+  const auto aspectRatio = cam.aspectRatio();
   const int maxX = zoom * aspectRatio;
   const int maxY = static_cast<int>(zoom);
   const auto divisionsX = std::views::iota(0, maxX + 1);
   const auto divisionsY = std::views::iota(0, maxY + 1);
   const auto color = glm::vec3{0.8f, 0.8f, 0.8f};
   const auto makeVertex = [color](glm::vec2 pos) { return Vertex{pos, color}; };
-  grid_ = std::vector<Vertex>();
+  vertices_ = std::vector<Vertex>();
+
   for (const auto division : divisionsX) {
     const float left = std::trunc(target.x - division);
     const float right = std::trunc(target.x + division);
@@ -89,7 +95,7 @@ void OpenGLRenderPanel::recalculateGrid() {
     const float bottom = target.y - zoom;
     const auto vertices = std::vector{makeVertex({left, top}), makeVertex({left, bottom}), makeVertex({right, top}),
                                       makeVertex({right, bottom})};
-    grid_.append_range(vertices);
+    vertices_.append_range(vertices);
   }
   for (const auto division : divisionsY) {
     const float left = target.x - aspectRatio * zoom;
@@ -98,11 +104,8 @@ void OpenGLRenderPanel::recalculateGrid() {
     const float bottom = std::trunc(target.y - division);
     const auto vertices = std::vector{makeVertex({left, top}), makeVertex({right, top}), makeVertex({left, bottom}),
                                       makeVertex({right, bottom})};
-    grid_.append_range(vertices);
+    vertices_.append_range(vertices);
   }
 }
 
-void OpenGLRenderPanel::move(Point topleft) noexcept { position_ = topleft; }
-void OpenGLRenderPanel::resize(Size size) noexcept { size_ = size; }
-Size OpenGLRenderPanel::size() const noexcept { return size_; }
-Point OpenGLRenderPanel::position() const noexcept { return position_; }
+std::vector<Vertex> Grid::vertices() const noexcept { return vertices_; }

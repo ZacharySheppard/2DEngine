@@ -13,6 +13,7 @@ OrthographicCamera::OrthographicCamera(uint32_t width, uint32_t height) {
 glm::mat4 OrthographicCamera::mvp() const noexcept { return proj_ * view_ * glm::mat4(1.0f); }
 
 float OrthographicCamera::zoom() const noexcept { return zoom_; }
+
 void OrthographicCamera::setZoom(float zoom) noexcept {
   zoom_ = std::max(zoom, 1.0f);
   proj_ = glm::ortho(zoom_ * aspectRatio_, -zoom_ * aspectRatio_, -1.0f * zoom_, zoom_);
@@ -26,3 +27,5 @@ void OrthographicCamera::setTarget(glm::vec3 pos) noexcept {
 }
 
 glm::vec3 OrthographicCamera::target() const noexcept { return target_; }
+
+float OrthographicCamera::aspectRatio() const noexcept { return aspectRatio_; }

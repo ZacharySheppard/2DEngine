@@ -9,6 +9,16 @@
 #include "renderer/Draw.hpp"
 #include "renderer/Shader.hpp"
 #include "renderer/Texture.hpp"
+
+class Grid {
+ public:
+  void recalculate(const OrthographicCamera& camera);
+  [[nodiscard]] std::vector<Vertex> vertices() const noexcept;
+
+ private:
+  std::vector<Vertex> vertices_;
+};
+
 class OpenGLRenderPanel : public Panel {
  public:
   OpenGLRenderPanel(std::string name, Size size, Point position) noexcept;
@@ -26,8 +36,7 @@ class OpenGLRenderPanel : public Panel {
 
  private:
   void updateCameraPosition();
-  void recalculateGrid();
-  std::vector<Vertex> grid_;
+  Grid grid_;
   Point position_;
   DrawQuad drawQuad_;
   DrawLine drawLine_;
@@ -36,6 +45,4 @@ class OpenGLRenderPanel : public Panel {
   std::string name_;
   Texture2D texture_;
   RenderBuffer rbo_;
-  glm::vec3 cameraPosition_;
-  std::jthread handleMouseEvents_;
 };

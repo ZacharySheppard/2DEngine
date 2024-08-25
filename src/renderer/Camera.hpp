@@ -8,6 +8,7 @@ class OrthographicCamera {
   [[nodiscard]] glm::vec3 target() const noexcept;
   void setZoom(float zoom) noexcept;
   [[nodiscard]] float zoom() const noexcept;
+  [[nodiscard]] float aspectRatio() const noexcept;
 
  private:
   float zoom_;
