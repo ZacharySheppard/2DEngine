@@ -16,7 +16,9 @@ OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position
       size_(size),
       rbo_(size.width, size.height),
       texture_(size.width, size.height),
-      camera_(size.width, size.height) {}
+      camera_(size.width, size.height) {
+  recalculateGrid();
+}
 
 void OpenGLRenderPanel::update() noexcept {
   {
@@ -31,7 +33,7 @@ void OpenGLRenderPanel::update() noexcept {
     glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, size_.width, size_.height);
-    recalculateGrid();
+    drawLine_(grid_, camera_.mvp());
     drawQuad_(vertices, camera_.mvp());
   }
 
@@ -46,6 +48,7 @@ void OpenGLRenderPanel::update() noexcept {
 
 void OpenGLRenderPanel::updateCameraPosition() {
   const auto zoom = camera_.zoom();
+  auto hasChanged = false;
   if (ImGui::IsMouseDragging(0) && ImGui::IsWindowFocused()) {
     auto delta = ImGui::GetMouseDragDelta();
     const auto target = camera_.target();
@@ -55,10 +58,16 @@ void OpenGLRenderPanel::updateCameraPosition() {
                                 0.0f};                                                // z
     camera_.setTarget(target + diff);
     ImGui::ResetMouseDragDelta();
+    hasChanged = true;
   }
   float delta = ImGui::GetIO().MouseWheel;
   if (ImGui::IsWindowFocused() && delta != 0) {
     camera_.setZoom(zoom + delta);
+    hasChanged = true;
+  }
+
+  if (hasChanged) {
+    recalculateGrid();
   }
 }
 
@@ -72,22 +81,25 @@ void OpenGLRenderPanel::recalculateGrid() {
   const auto divisionsY = std::views::iota(0, maxY + 1);
   const auto color = glm::vec3{0.8f, 0.8f, 0.8f};
   const auto makeVertex = [color](glm::vec2 pos) { return Vertex{pos, color}; };
-  auto lines = std::vector<Vertex>();
+  grid_ = std::vector<Vertex>();
   for (const auto division : divisionsX) {
-    const auto left = std::lroundf(target.x - (division * aspectRatio));
-    const auto right = std::lroundf(target.x + (division * aspectRatio));
-    const auto vertices = std::vector{makeVertex({left, zoom}), makeVertex({left, -zoom}), makeVertex({right, zoom}),
-                                      makeVertex({right, -zoom})};
-    lines.append_range(vertices);
+    const float left = std::trunc(target.x - division);
+    const float right = std::trunc(target.x + division);
+    const float top = target.y + zoom;
+    const float bottom = target.y - zoom;
+    const auto vertices = std::vector{makeVertex({left, top}), makeVertex({left, bottom}), makeVertex({right, top}),
+                                      makeVertex({right, bottom})};
+    grid_.append_range(vertices);
   }
-  // for (const auto division : divisionsY) {
-  //   const auto vertices = std::vector{Vertex{{zoom * aspectRatio, target.y + division}, color},
-  //                                     Vertex{{-zoom * aspectRatio, target.y + division}, color},
-  //                                     Vertex{{zoom * aspectRatio, target.y - division}, color},
-  //                                     Vertex{{-zoom * aspectRatio, target.y - division}, color}};
-  // lines.append_range(vertices);
-  // }
-  drawLine_(lines, camera_.mvp());
+  for (const auto division : divisionsY) {
+    const float left = target.x - aspectRatio * zoom;
+    const float right = target.x + aspectRatio * zoom;
+    const float top = std::trunc(target.y + division);
+    const float bottom = std::trunc(target.y - division);
+    const auto vertices = std::vector{makeVertex({left, top}), makeVertex({right, top}), makeVertex({left, bottom}),
+                                      makeVertex({right, bottom})};
+    grid_.append_range(vertices);
+  }
 }
 
 void OpenGLRenderPanel::move(Point topleft) noexcept { position_ = topleft; }
