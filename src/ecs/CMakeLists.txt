@@ -1,15 +1,21 @@
-set(TARGET_NAME logger)
+set(TARGET_NAME ecs)
 
 add_library(${TARGET_NAME})
 add_library(2D_ENGINE::${TARGET_NAME} ALIAS ${TARGET_NAME})
+
 set_property(TARGET ${TARGET_NAME} PROPERTY CXX_STANDARD 23)
 target_sources(${TARGET_NAME}
     PUBLIC
-        Logger.cpp
+        Scene.cpp
 )
 
 target_link_libraries(${TARGET_NAME}
-    spdlog::spdlog 
+    2D_ENGINE::logger
+)
+
+target_include_directories(${TARGET_NAME}
+PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/..
 )
 
 install(TARGETS ${TARGET_NAME}
