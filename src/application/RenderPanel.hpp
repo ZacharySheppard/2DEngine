@@ -27,21 +27,16 @@ class OpenGLRenderPanel : public Panel {
   [[nodiscard]] Size size() const noexcept override;
   [[nodiscard]] Point position() const noexcept override;
   void update() noexcept override;
-
-  std::vector<Vertex> vertices = {{{-0.5f, -0.5f}, {0.f, 0.f, 0.f}},  // bottom left
-                                  {{0.5f, -0.5f}, {1.f, 0.f, 0.f}},   // bottom right
-                                  {{0.5f, 0.5f}, {0.f, 0.f, 1.f}},    // top right
-                                  {{-0.5f, 0.5f}, {1.f, 1.f, 1.f}}};  // top left
   glm::vec3 bgColor;
 
  private:
   void updateCameraPosition();
   Grid grid_;
   Point position_;
+  Size size_;
   DrawQuad drawQuad_;
   DrawLine drawLine_;
   OrthographicCamera camera_;
-  Size size_;
   std::string name_;
   Texture2D texture_;
   RenderBuffer rbo_;

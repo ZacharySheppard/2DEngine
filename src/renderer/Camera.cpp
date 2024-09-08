@@ -2,6 +2,7 @@
 
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
+#include <algorithm>
 OrthographicCamera::OrthographicCamera(uint32_t width, uint32_t height) {
   constexpr glm::vec3 target{0.0f, 0.0f, 0.0f};
   constexpr float zoom = 3.0f;

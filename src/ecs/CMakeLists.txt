@@ -7,10 +7,12 @@ set_property(TARGET ${TARGET_NAME} PROPERTY CXX_STANDARD 23)
 target_sources(${TARGET_NAME}
     PUBLIC
         Scene.cpp
+        Transform.cpp
 )
 
 target_link_libraries(${TARGET_NAME}
     2D_ENGINE::logger
+    glm::glm
 )
 
 target_include_directories(${TARGET_NAME}

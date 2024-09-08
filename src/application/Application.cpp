@@ -6,11 +6,13 @@
 #include "ConfigurationPanel.hpp"
 #include "Panel.hpp"
 #include "RenderPanel.hpp"
+#include "ScenePanel.hpp"
 #include "glad/glad.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "logger/Logger.hpp"
+
 namespace {
 void resizeUI(ConfigurationPanel& cfg, OpenGLRenderPanel& rnd, float w, float h) {
   const auto sidebarSize = Size{0.2f * w, h};
@@ -37,13 +39,9 @@ bool Application::run() const noexcept {
   ImGui_ImplGlfw_InitForOpenGL(window_.window(), true);
   ImGui_ImplOpenGL3_Init();
   auto [initialWidth, initialHeight] = window_.getFrameBufferSize();
-  auto config = ConfigurationPanel("configuration", Size{initialWidth * 0.2f, initialHeight});
+  auto config = ConfigurationPanel("configuration", Size{initialWidth * 0.6f, initialHeight});
   auto render = OpenGLRenderPanel("render", Size{initialWidth * 0.8f, initialHeight}, Point{initialWidth * 0.2f, 0});
-
-  auto originV1 = render.vertices[0].pos;
-  auto originV2 = render.vertices[1].pos;
-  auto originV3 = render.vertices[2].pos;
-  auto originV4 = render.vertices[3].pos;
+  auto scene = ScenePanel("scene", Size{initialWidth * 0.2f, initialHeight * 0.4f}, Point{0.0f, initialHeight * 0.6f});
 
   while (!window_.shouldClose()) {
     window_.pollEvents();
@@ -51,17 +49,10 @@ bool Application::run() const noexcept {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     config.update();
-
-    render.vertices[0].col = glm::vec3{config.ColorV1.x, config.ColorV1.y, config.ColorV1.z};
-    render.vertices[1].col = glm::vec3{config.ColorV2.x, config.ColorV2.y, config.ColorV2.z};
-    render.vertices[2].col = glm::vec3{config.ColorV3.x, config.ColorV3.y, config.ColorV3.z};
-    render.vertices[0].pos = glm::vec2{originV1.x + config.Offset.x, originV1.y + config.Offset.y};
-    render.vertices[1].pos = glm::vec2{originV2.x + config.Offset.x, originV2.y + config.Offset.y};
-    render.vertices[2].pos = glm::vec2{originV3.x + config.Offset.x, originV3.y + config.Offset.y};
-    render.vertices[3].pos = glm::vec2{originV4.x + config.Offset.x, originV4.y + config.Offset.y};
-    render.bgColor = {config.ColorBG.x, config.ColorBG.y, config.ColorBG.z};
     render.update();
+    scene.update();
     // render frames
+
     ImGui::Render();
     auto [width, height] = window_.getFrameBufferSize();
     resizeUI(config, render, width, height);

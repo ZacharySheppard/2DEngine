@@ -34,7 +34,6 @@ void OpenGLRenderPanel::update() noexcept {
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, size_.width, size_.height);
     drawLine_(grid_.vertices(), camera_.mvp());
-    drawQuad_(vertices, camera_.mvp());
   }
 
   ImGui::SetNextWindowSize({size_.width, size_.height});

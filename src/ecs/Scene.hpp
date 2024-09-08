@@ -1,4 +1,4 @@
 #pragma once
-class Scene {
- public:
-};
+#include "Transform.hpp"
+
+class Scene {};

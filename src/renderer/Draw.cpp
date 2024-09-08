@@ -21,7 +21,15 @@ bool DrawQuad::operator()(std::vector<Vertex> vertices, glm::mat4 mvp) {
   const auto colors = VertexBuffer(vertices | views::transform(&Vertex::col));
 
   constexpr auto quadIndices = std::array<uint32_t, 6>{0, 1, 2, 0, 2, 3};
-  const auto indexBuffer = IndexBuffer(quadIndices);
+  auto indicies = std::vector<uint32_t>();
+  const size_t numQuads = vertices.size() / 4;
+  int offset = 0;
+  for (auto i = 0; i < numQuads; i++) {
+    ranges::transform(quadIndices, std::back_inserter(indicies), [offset](uint32_t i) { return i + offset; });
+    offset += 4;
+  }
+
+  const auto indexBuffer = IndexBuffer(indicies);
 
   const uint32_t positionLocation = program_.attribute("vPos");
   const uint32_t colorLocation = program_.attribute("vCol");
