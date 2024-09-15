@@ -3,10 +3,10 @@
 #include <memory>
 #include <vector>
 
-#include "ConfigurationPanel.hpp"
+#include "ConfigurationView.hpp"
 #include "Panel.hpp"
-#include "RenderPanel.hpp"
-#include "ScenePanel.hpp"
+#include "RenderView.hpp"
+#include "SceneView.hpp"
 #include "glad/glad.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -14,13 +14,13 @@
 #include "logger/Logger.hpp"
 
 namespace {
-void resizeUI(ConfigurationPanel& cfg, OpenGLRenderPanel& rnd, float w, float h) {
+void resizeUI(ConfigurationView& cfg, OpenGLRenderView& rnd, float w, float h) {
   const auto sidebarSize = Size{0.2f * w, h};
-  cfg.resize(sidebarSize);
+  cfg.display().resize(sidebarSize);
   const auto renderSize = Size{0.8f * w, h};
   const auto renderPos = Point{0.2f * w, 0.f};
-  rnd.resize(renderSize);
-  rnd.move(renderPos);
+  rnd.display().resize(renderSize);
+  rnd.display().move(renderPos);
 }
 }  // namespace
 
@@ -39,9 +39,16 @@ bool Application::run() const noexcept {
   ImGui_ImplGlfw_InitForOpenGL(window_.window(), true);
   ImGui_ImplOpenGL3_Init();
   auto [initialWidth, initialHeight] = window_.getFrameBufferSize();
-  auto config = ConfigurationPanel("configuration", Size{initialWidth * 0.6f, initialHeight});
-  auto render = OpenGLRenderPanel("render", Size{initialWidth * 0.8f, initialHeight}, Point{initialWidth * 0.2f, 0});
-  auto scene = ScenePanel("scene", Size{initialWidth * 0.2f, initialHeight * 0.4f}, Point{0.0f, initialHeight * 0.6f});
+  const auto configurationDisplay = Panel("configuration", Size{initialWidth * 0.6f, initialHeight}, Point{0.f, 0.f});
+
+  auto config = ConfigurationView(configurationDisplay);
+
+  const auto renderDisplay = Panel("render", Size{initialWidth * 0.8f, initialHeight}, Point{initialWidth * 0.2f, 0});
+  auto render = OpenGLRenderView(renderDisplay);
+
+  const auto sceneDisplay =
+      Panel("scene", Size{initialWidth * 0.2f, initialHeight * 0.4f}, Point{0.0f, initialHeight * 0.6f});
+  auto scene = SceneView(sceneDisplay);
 
   while (!window_.shouldClose()) {
     window_.pollEvents();

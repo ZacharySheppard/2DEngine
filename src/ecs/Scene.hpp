@@ -12,7 +12,7 @@ class Scene {
 
   template <typename T>
   void addComponent(Entity e, T component) {
-    registry_.emplace<T>(static_cast<entt::entity>(e.id), component));
+    registry_.emplace<T>(static_cast<entt::entity>(e.id), component);
   }
 
  private:

@@ -1,4 +1,4 @@
-#include "RenderPanel.hpp"
+#include "RenderView.hpp"
 
 #include <format>
 #include <ranges>
@@ -10,17 +10,17 @@ namespace ranges = std::ranges;
 namespace views = std::views;
 }  // namespace
 
-OpenGLRenderPanel::OpenGLRenderPanel(std::string name, Size size, Point position) noexcept
-    : name_(name),
-      position_(position),
-      size_(size),
-      rbo_(size.width, size.height),
-      texture_(size.width, size.height),
-      camera_(size.width, size.height) {
+OpenGLRenderView::OpenGLRenderView(Panel display) noexcept
+    : rbo_(display.size().width, display.size().height),
+      texture_(display.size().width, display.size().height),
+      camera_(display.size().width, display.size().height),
+      panel_(display) {
   grid_.recalculate(camera_);
 }
 
-void OpenGLRenderPanel::update() noexcept {
+void OpenGLRenderView::update() noexcept {
+  const auto [width, height] = panel_.size();
+  const auto [posx, posy] = panel_.position();
   {
     const auto framebuffer = FrameBuffer();
     texture_.attachFrameBuffer(framebuffer);
@@ -32,33 +32,35 @@ void OpenGLRenderPanel::update() noexcept {
     rbo_.bind();
     glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glViewport(0, 0, size_.width, size_.height);
+    glViewport(0, 0, width, height);
     drawLine_(grid_.vertices(), camera_.mvp());
   }
 
-  ImGui::SetNextWindowSize({size_.width, size_.height});
-  ImGui::SetNextWindowPos({position_.x, position_.y});
+  ImGui::SetNextWindowSize({width, height});
+  ImGui::SetNextWindowPos({posx, posy});
   auto flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration;
-  ImGui::Begin(name_.c_str(), nullptr, flags);
+  ImGui::Begin(panel_.name().c_str(), 0, flags);
   updateCameraPosition();
   ImGui::Image((ImTextureID)texture_.id(), ImGui::GetContentRegionAvail(), ImVec2(0, 1), ImVec2(1, 0));
   ImGui::End();
 }
 
-void OpenGLRenderPanel::updateCameraPosition() {
+void OpenGLRenderView::updateCameraPosition() {
+  const auto [width, height] = panel_.size();
   const auto zoom = camera_.zoom();
   auto hasChanged = false;
   if (ImGui::IsMouseDragging(0) && ImGui::IsWindowFocused()) {
     auto delta = ImGui::GetMouseDragDelta();
     const auto target = camera_.target();
-    const auto aspectRatio = size_.width / size_.height;
-    const auto diff = glm::vec3{(2.0f * zoom * aspectRatio * delta.x / size_.width),  // x
-                                (2.0f * zoom * delta.y / size_.height),               // y
-                                0.0f};                                                // z
+    const auto aspectRatio = width / height;
+    const auto diff = glm::vec3{(2.0f * zoom * aspectRatio * delta.x / width),  // x
+                                (2.0f * zoom * delta.y / height),               // y
+                                0.0f};                                          // z
     camera_.setTarget(target + diff);
     ImGui::ResetMouseDragDelta();
     hasChanged = true;
   }
+
   float delta = ImGui::GetIO().MouseWheel;
   if (ImGui::IsWindowFocused() && delta != 0) {
     camera_.setZoom(zoom + delta);
@@ -70,10 +72,7 @@ void OpenGLRenderPanel::updateCameraPosition() {
   }
 }
 
-void OpenGLRenderPanel::move(Point topleft) noexcept { position_ = topleft; }
-void OpenGLRenderPanel::resize(Size size) noexcept { size_ = size; }
-Size OpenGLRenderPanel::size() const noexcept { return size_; }
-Point OpenGLRenderPanel::position() const noexcept { return position_; }
+Panel& OpenGLRenderView::display() noexcept { return panel_; }
 
 void Grid::recalculate(const OrthographicCamera& cam) {
   const auto zoom = cam.zoom();

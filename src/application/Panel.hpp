@@ -7,10 +7,16 @@
 
 class Panel {
  public:
-  virtual ~Panel() = default;
-  virtual void resize(Size size) noexcept = 0;
-  virtual void move(Point topleft) noexcept = 0;
-  virtual Size size() const noexcept = 0;
-  virtual Point position() const noexcept = 0;
-  virtual void update() noexcept = 0;
+  Panel(std::string name, Size size, Point position) noexcept;
+  void resize(Size size) noexcept;
+  void move(Point topleft) noexcept;
+  void rename(std::string name) noexcept;
+  std::string name() const noexcept;
+  Size size() const noexcept;
+  Point position() const noexcept;
+
+ private:
+  std::string name_;
+  Point position_;
+  Size size_;
 };

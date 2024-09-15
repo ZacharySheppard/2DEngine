@@ -5,9 +5,10 @@ target_sources(${TARGET_NAME}
     PUBLIC   
     Window.cpp
     Application.cpp
-    ConfigurationPanel.cpp
-    RenderPanel.cpp
-    ScenePanel.cpp
+    Panel.cpp
+    ConfigurationView.cpp
+    RenderView.cpp
+    SceneView.cpp
     main.cpp
 )
 

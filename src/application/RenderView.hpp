@@ -19,25 +19,20 @@ class Grid {
   std::vector<Vertex> vertices_;
 };
 
-class OpenGLRenderPanel : public Panel {
+class OpenGLRenderView {
  public:
-  OpenGLRenderPanel(std::string name, Size size, Point position) noexcept;
-  void move(Point topleft) noexcept override;
-  void resize(Size size) noexcept override;
-  [[nodiscard]] Size size() const noexcept override;
-  [[nodiscard]] Point position() const noexcept override;
-  void update() noexcept override;
+  OpenGLRenderView(Panel panel) noexcept;
+  Panel& display() noexcept;
+  void update() noexcept;
   glm::vec3 bgColor;
 
  private:
   void updateCameraPosition();
+  Panel panel_;
   Grid grid_;
-  Point position_;
-  Size size_;
   DrawQuad drawQuad_;
   DrawLine drawLine_;
   OrthographicCamera camera_;
-  std::string name_;
   Texture2D texture_;
   RenderBuffer rbo_;
 };
