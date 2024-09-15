@@ -1,6 +1,9 @@
 #include "Scene.hpp"
 
 Entity Scene::createEntity() noexcept {
-  const auto entity = registry_.create();
-  return Entity{static_cast<uint64_t>(entity)};
+  const auto id = static_cast<uint64_t>(registry_.create());
+  const auto transform = TransformComponent{};
+  const auto entity = Entity{id};
+  addComponent(entity, transform);
+  return entity;
 }
