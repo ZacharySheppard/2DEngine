@@ -5,6 +5,7 @@
         "glad",
         "glm",
         "spdlog",
+        "entt",
         {
             "name": "imgui",
             "features": [

@@ -12,6 +12,7 @@ target_sources(${TARGET_NAME}
 
 target_link_libraries(${TARGET_NAME}
     2D_ENGINE::logger
+    EnTT::EnTT
     glm::glm
 )
 
